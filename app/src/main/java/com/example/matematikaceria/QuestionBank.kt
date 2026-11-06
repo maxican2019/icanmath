@@ -5,7 +5,7 @@ import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import kotlin.random.Random
 
-/** Bank soal tetap, dibaca dari assets/*.json. Tambahkan soal baru langsung di file JSON. */
+/** Bank soal tetap, dibaca dari file JSON di folder assets. Tambahkan soal baru langsung di file JSON. */
 object QuestionBank {
     private val json = Json { ignoreUnknownKeys = true }
     private val cache = HashMap<String, List<Question>>()
