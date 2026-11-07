@@ -1,4 +1,4 @@
-# Matematika Ceria
+# icanmath
 
 Aplikasi Android latihan matematika untuk kelas 1 SD sampai 12 SMA. Tanpa login: data tersimpan lokal di perangkat, bisa dicadangkan ke file dan dipulihkan di perangkat lain.
 
@@ -7,12 +7,15 @@ Aplikasi Android latihan matematika untuk kelas 1 SD sampai 12 SMA. Tanpa login:
 ## Fitur
 
 - Halaman awal beranimasi dengan tombol Masuk, Setting, dan Pulihkan.
+- Dashboard dengan menu beridentitas ikon, kartu latihan harian, ranking, dan ganti profil lewat klik nama di bagian atas.
 - Profil tanpa akun (nama, umur, kelas); mendukung lebih dari satu profil.
 - Dashboard: streak, latihan harian (5 soal campuran, seed tanggal), ranking mingguan lokal antar profil.
 - Pilih jenjang dan kelas (SD 1-6, SMP 7-9, SMA 10-12), tiga jenis soal:
   - Random: dibuat baru tiap mulai, jawaban dihitung kode.
   - Pilihan ganda tetap: bank soal di `assets/questions_mcq.json`.
-  - Soal cerita tetap: bank soal di `assets/questions_story.json`.
+  - Soal cerita tetap (hanya SD 1-6; di SMP dan SMA menunya disembunyikan): `assets/questions_story.json`.
+- Latihan bergaya game: kartu jawaban beranimasi, combo, poin, dan panel di bawah layar yang menjelaskan cara menghitung serta istilah (misalnya arti KPK) setelah setiap jawaban.
+- Hasil latihan dengan bintang dan bagian "Pelajari lagi" untuk soal yang salah.
 - Setelah latihan: bila ada lebih dari satu profil, pilih lanjut sebagai profil mana (default profil yang sama).
 - Latihan logika: puzzle penjumlahan, lebih besar atau kecil, kelompokkan buah.
 - Medali Bronze/Silver/Gold: waktu, nilai, daily sukses, daily non-stop, dan medali logika yang terpisah.
@@ -31,7 +34,7 @@ Versi library ada di `gradle/libs.versions.toml`. Versi sengaja konservatif (AGP
 ## Struktur
 
 ```
-app/src/main/java/com/example/matematikaceria/
+app/src/main/java/com/icanmath/app/
   Models.kt            data class (profil, sesi, soal)
   Repository.kt        penyimpanan JSON + ekspor/impor cadangan
   QuestionGenerator.kt generator soal per kelas
