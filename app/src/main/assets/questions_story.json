@@ -1,7 +1,0 @@
-[
-  {"grade": 1, "text": "Ani memiliki 5 buah apel. 3 apel diberikan kepada Budi. Berapa sisa apel Ani?", "options": ["2", "3", "5", "8"], "answerIndex": 0, "explanation": "5 − 3 = 2"},
-  {"grade": 1, "text": "Di kandang ada 4 ayam. Datang 3 ayam lagi. Berapa semua ayam di kandang?", "options": ["6", "7", "8", "1"], "answerIndex": 1, "explanation": "4 + 3 = 7"},
-  {"grade": 2, "text": "Rina membeli 25 permen dan Dodi membeli 18 permen. Berapa jumlah permen mereka?", "options": ["33", "43", "42", "7"], "answerIndex": 1, "explanation": "25 + 18 = 43"},
-  {"grade": 3, "text": "Satu kotak berisi 6 pensil. Berapa pensil dalam 7 kotak?", "options": ["36", "42", "13", "48"], "answerIndex": 1, "explanation": "6 × 7 = 42"},
-  {"grade": 4, "text": "Pak Tani memiliki 120 jeruk dan membagikannya sama banyak kepada 8 keluarga. Setiap keluarga mendapat ... jeruk.", "options": ["12", "14", "15", "16"], "answerIndex": 2, "explanation": "120 ÷ 8 = 15"}
-]
