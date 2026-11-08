@@ -203,12 +203,18 @@ fun FeedbackPanel(
             modifier = Modifier.fillMaxWidth().navigationBarsPadding().padding(20.dp),
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
-            Text(
-                if (correct) "✓ Benar! +$points poin" else "✗ Belum tepat",
-                color = fg,
-                style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.Bold
-            )
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                SlotImage(if (correct) Slot.FEEDBACK_CORRECT else Slot.FEEDBACK_WRONG, Modifier.size(56.dp)) {}
+                Text(
+                    if (correct) "✓ Benar! +$points poin" else "✗ Belum tepat",
+                    color = fg,
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold
+                )
+            }
             if (!correct) Text("Jawaban yang benar: $correctAnswer", color = fg, fontWeight = FontWeight.SemiBold)
             Column(
                 modifier = Modifier.heightIn(max = 280.dp).verticalScroll(rememberScrollState()),

@@ -1,5 +1,6 @@
 package com.icanmath.app.ui
 
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
@@ -82,6 +83,7 @@ fun HomeScreen(vm: AppViewModel, nav: NavHostController) {
             .background(Brush.verticalGradient(listOf(Indigo, IndigoDark)))
             .systemBarsPadding()
     ) {
+        SlotImage(Slot.HOME_BG, Modifier.fillMaxSize(), contentScale = ContentScale.Crop) {}
         // Hiasan simbol besar berwarna samar di latar belakang.
         Text("÷", fontSize = 120.sp, color = Color.White.copy(alpha = 0.10f),
             modifier = Modifier.align(Alignment.TopEnd).offset(x = 16.dp, y = (40 + bob).dp))
@@ -95,6 +97,7 @@ fun HomeScreen(vm: AppViewModel, nav: NavHostController) {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
+            SlotImage(Slot.HOME_MASCOT, Modifier.size(220.dp)) {
             Row(horizontalArrangement = Arrangement.spacedBy(14.dp)) {
                 listOf("+", "−", "×", "÷").forEachIndexed { i, symbol ->
                     val dy = if (i % 2 == 0) bob else -bob
@@ -109,8 +112,11 @@ fun HomeScreen(vm: AppViewModel, nav: NavHostController) {
                     }
                 }
             }
+            }
             Spacer(Modifier.height(32.dp))
-            Text("icanmath", fontSize = 44.sp, color = Color.White, fontWeight = FontWeight.ExtraBold)
+            SlotImage(Slot.HOME_LOGO, Modifier.fillMaxWidth().height(72.dp)) {
+                Text("icanmath", fontSize = 44.sp, color = Color.White, fontWeight = FontWeight.ExtraBold)
+            }
             Spacer(Modifier.height(6.dp))
             Text(
                 "Belajar berhitung jadi permainan seru",
@@ -189,7 +195,8 @@ private class MenuItem(
     val title: String,
     val subtitle: String,
     val tint: Color,
-    val route: String
+    val route: String,
+    val slot: String
 )
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -248,12 +255,14 @@ fun DashboardScreen(vm: AppViewModel, nav: NavHostController) {
                     }
                     Spacer(Modifier.weight(1f))
                     Surface(shape = RoundedCornerShape(20.dp), color = Color(0xFFFFE8CC)) {
-                        Text(
-                            "🔥 $streak hari",
+                        Row(
                             modifier = Modifier.padding(horizontal = 14.dp, vertical = 8.dp),
-                            color = Color(0xFF7A3E00),
-                            fontWeight = FontWeight.Bold
-                        )
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(6.dp)
+                        ) {
+                            SlotImage(Slot.STREAK, Modifier.size(22.dp)) { Text("🔥") }
+                            Text("$streak hari", color = Color(0xFF7A3E00), fontWeight = FontWeight.Bold)
+                        }
                     }
                 }
 
@@ -265,7 +274,9 @@ fun DashboardScreen(vm: AppViewModel, nav: NavHostController) {
                         .background(Brush.linearGradient(listOf(Indigo, Color(0xFF5C6BC0))))
                         .padding(20.dp)
                 ) {
-                    Text("🎯", fontSize = 64.sp, modifier = Modifier.align(Alignment.TopEnd))
+                    SlotImage(Slot.DAILY_HERO, Modifier.align(Alignment.TopEnd).size(76.dp)) {
+                        Text("🎯", fontSize = 64.sp, modifier = Modifier.align(Alignment.TopEnd))
+                    }
                     Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
                         Text(
                             if (doneToday) "Hebat, latihan hari ini selesai!" else "Latihan harian",
@@ -294,12 +305,12 @@ fun DashboardScreen(vm: AppViewModel, nav: NavHostController) {
 
                 Text("Menu", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
                 val menu = listOf(
-                    MenuItem("📝", "Latihan Soal", "Pilih kelas dan jenis soal", Color(0xFF3949AB), "classselect"),
-                    MenuItem("🧩", "Latihan Logika", "Puzzle dan permainan", Color(0xFF00796B), "logicmenu"),
-                    MenuItem("🖨️", "Cetak PDF", "Lembar soal untuk dicetak", Color(0xFFB7791F), "print"),
-                    MenuItem("🏅", "Medali Saya", "Koleksi dan profil", Color(0xFFC62828), "profile"),
-                    MenuItem("👨‍👩‍👧", "Tambah Profil", "Untuk adik atau kakak", Color(0xFF6A1B9A), "profileform"),
-                    MenuItem("⚙️", "Pengaturan", "Cadangan dan data", Color(0xFF546E7A), "settings")
+                    MenuItem("📝", "Latihan Soal", "Pilih kelas dan jenis soal", Color(0xFF3949AB), "classselect", Slot.MENU_SOAL),
+                    MenuItem("🧩", "Latihan Logika", "Puzzle dan permainan", Color(0xFF00796B), "logicmenu", Slot.MENU_LOGIKA),
+                    MenuItem("🖨️", "Cetak PDF", "Lembar soal untuk dicetak", Color(0xFFB7791F), "print", Slot.MENU_CETAK),
+                    MenuItem("🏅", "Medali Saya", "Koleksi dan profil", Color(0xFFC62828), "profile", Slot.MENU_MEDALI),
+                    MenuItem("👨‍👩‍👧", "Tambah Profil", "Untuk adik atau kakak", Color(0xFF6A1B9A), "profileform", Slot.MENU_PROFIL),
+                    MenuItem("⚙️", "Pengaturan", "Cadangan dan data", Color(0xFF546E7A), "settings", Slot.MENU_SETTING)
                 )
                 menu.chunked(2).forEach { rowItems ->
                     Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -316,7 +327,8 @@ fun DashboardScreen(vm: AppViewModel, nav: NavHostController) {
                         ranking.forEachIndexed { i, (profile, pts) ->
                             val medal = when (i) { 0 -> "🥇"; 1 -> "🥈"; 2 -> "🥉"; else -> "${i + 1}." }
                             Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                                Text(medal, fontSize = 20.sp)
+                                val rankSlot = when (i) { 0 -> Slot.RANK_1; 1 -> Slot.RANK_2; 2 -> Slot.RANK_3; else -> "" }
+                                SlotImage(rankSlot, Modifier.size(28.dp)) { Text(medal, fontSize = 20.sp) }
                                 Avatar(profile.name, 32)
                                 Text(
                                     profile.name + if (profile.id == p.id) " (aktif)" else "",
@@ -388,7 +400,7 @@ private fun MenuTile(m: MenuItem, modifier: Modifier, onClick: () -> Unit) {
             Box(
                 modifier = Modifier.size(52.dp).background(m.tint.copy(alpha = 0.2f), RoundedCornerShape(16.dp)),
                 contentAlignment = Alignment.Center
-            ) { Text(m.emoji, fontSize = 28.sp) }
+            ) { SlotImage(m.slot, Modifier.size(40.dp)) { Text(m.emoji, fontSize = 28.sp) } }
             Column {
                 Text(m.title, fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleSmall)
                 Text(m.subtitle, style = MaterialTheme.typography.bodySmall)

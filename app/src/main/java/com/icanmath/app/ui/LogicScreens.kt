@@ -109,10 +109,10 @@ fun LogicMenuScreen(vm: AppViewModel, nav: NavHostController) {
     fun status(i: Int): String = medals.getOrNull(i)?.let { "${it.tier.label} · ${it.detail}" } ?: ""
 
     AppScaffold("Latihan Logika", { nav.popBackStack() }) {
-        LogicCard("Puzzle penjumlahan", "Isi angka yang hilang", status(0), true) { nav.navigate("puzzle") }
-        LogicCard("Lebih besar atau kecil", "Bandingkan jumlah dan angka", status(1), true) { nav.navigate("compare") }
-        LogicCard("Kelompokkan", "Kelompokkan buah", status(2), true) { nav.navigate("group") }
-        LogicCard("Permainan lain", "Pola dan timbangan, segera hadir", "", false) { }
+        LogicCard("🧩", Slot.LOGIC_PUZZLE, "Puzzle penjumlahan", "Isi angka yang hilang", status(0), true) { nav.navigate("puzzle") }
+        LogicCard("⚖️", Slot.LOGIC_COMPARE, "Lebih besar atau kecil", "Bandingkan jumlah dan angka", status(1), true) { nav.navigate("compare") }
+        LogicCard("🍎", Slot.LOGIC_GROUP, "Kelompokkan", "Kelompokkan buah", status(2), true) { nav.navigate("group") }
+        LogicCard("🎲", Slot.LOGIC_OTHER, "Permainan lain", "Pola dan timbangan, segera hadir", "", false) { }
         Text(
             "Medali logika terpisah dari medali latihan harian dan tidak memengaruhi ranking.",
             style = MaterialTheme.typography.bodySmall
@@ -124,12 +124,27 @@ fun LogicMenuScreen(vm: AppViewModel, nav: NavHostController) {
 }
 
 @Composable
-private fun LogicCard(title: String, desc: String, status: String, enabled: Boolean, onClick: () -> Unit) {
+private fun LogicCard(
+    emoji: String,
+    slot: String,
+    title: String,
+    desc: String,
+    status: String,
+    enabled: Boolean,
+    onClick: () -> Unit
+) {
     ElevatedCard(onClick = onClick, enabled = enabled, modifier = Modifier.fillMaxWidth()) {
-        Column(Modifier.padding(16.dp).fillMaxWidth()) {
-            Text(title, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.secondary)
-            Text(desc, style = MaterialTheme.typography.bodyMedium)
-            if (status.isNotEmpty()) Text(status, style = MaterialTheme.typography.bodySmall)
+        Row(
+            modifier = Modifier.padding(16.dp).fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            SlotImage(slot, Modifier.size(52.dp)) { Text(emoji, fontSize = 36.sp) }
+            Column(Modifier.weight(1f)) {
+                Text(title, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.secondary)
+                Text(desc, style = MaterialTheme.typography.bodyMedium)
+                if (status.isNotEmpty()) Text(status, style = MaterialTheme.typography.bodySmall)
+            }
         }
     }
 }
@@ -284,20 +299,29 @@ private val fruitNames = listOf("Apel", "Pisang", "Anggur")
 private val fruitLetters = listOf("A", "P", "G")
 private val fruitColors = listOf(Color(0xFFC62828), Color(0xFFB7791F), Color(0xFF6A1B9A))
 
+private val fruitSlots = listOf(Slot.FRUIT_APPLE, Slot.FRUIT_BANANA, Slot.FRUIT_GRAPE)
+
 @Composable
 fun FruitView(type: Int, selected: Boolean) {
-    val shape = if (type == 1) RoundedCornerShape(50) else CircleShape
-    val size = when (type) {
-        1 -> Modifier.size(width = 56.dp, height = 36.dp)
-        2 -> Modifier.size(30.dp)
-        else -> Modifier.size(44.dp)
+    val ring = if (selected) {
+        Modifier.border(3.dp, MaterialTheme.colorScheme.secondary, RoundedCornerShape(14.dp))
+    } else {
+        Modifier
     }
-    val outline = if (selected) Modifier.border(3.dp, MaterialTheme.colorScheme.secondary, shape) else Modifier
-    Box(
-        modifier = size.background(fruitColors[type], shape).then(outline),
-        contentAlignment = Alignment.Center
-    ) {
-        Text(fruitLetters[type], color = Color.White, fontSize = 12.sp, fontWeight = FontWeight.Bold)
+    SlotImage(fruitSlots[type], Modifier.size(52.dp).then(ring)) {
+        val shape = if (type == 1) RoundedCornerShape(50) else CircleShape
+        val size = when (type) {
+            1 -> Modifier.size(width = 56.dp, height = 36.dp)
+            2 -> Modifier.size(30.dp)
+            else -> Modifier.size(44.dp)
+        }
+        val outline = if (selected) Modifier.border(3.dp, MaterialTheme.colorScheme.secondary, shape) else Modifier
+        Box(
+            modifier = size.background(fruitColors[type], shape).then(outline),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(fruitLetters[type], color = Color.White, fontSize = 12.sp, fontWeight = FontWeight.Bold)
+        }
     }
 }
 

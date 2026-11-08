@@ -1,5 +1,7 @@
 package com.icanmath.app.ui
 
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.draw.clip
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -97,8 +99,16 @@ fun TierBadge(tier: Tier) {
         Tier.GOLD -> Color(0xFFA8620A)
         Tier.NONE -> Color(0xFF757575)
     }
-    Box(Modifier.size(44.dp).background(color, CircleShape), contentAlignment = Alignment.Center) {
-        Text(tier.letter, color = Color.White, fontWeight = FontWeight.Bold)
+    val slot = when (tier) {
+        Tier.BRONZE -> Slot.MEDAL_BRONZE
+        Tier.SILVER -> Slot.MEDAL_SILVER
+        Tier.GOLD -> Slot.MEDAL_GOLD
+        Tier.NONE -> Slot.MEDAL_LOCKED
+    }
+    SlotImage(slot, Modifier.size(44.dp)) {
+        Box(Modifier.size(44.dp).background(color, CircleShape), contentAlignment = Alignment.Center) {
+            Text(tier.letter, color = Color.White, fontWeight = FontWeight.Bold)
+        }
     }
 }
 
@@ -153,13 +163,20 @@ fun Avatar(name: String, size: Int = 40) {
         Color(0xFF3949AB), Color(0xFF00796B), Color(0xFFB7791F),
         Color(0xFFC62828), Color(0xFF6A1B9A), Color(0xFF00838F)
     )
-    val color = palette[Math.abs(name.hashCode()) % palette.size]
-    Box(Modifier.size(size.dp).background(color, CircleShape), contentAlignment = Alignment.Center) {
-        Text(
-            name.take(1).uppercase(),
-            color = Color.White,
-            fontWeight = FontWeight.Bold,
-            style = MaterialTheme.typography.titleMedium
-        )
+    val idx = Math.abs(name.hashCode()) % palette.size
+    val color = palette[idx]
+    SlotImage(
+        "img_avatar_${idx + 1}",
+        Modifier.size(size.dp).clip(CircleShape),
+        contentScale = ContentScale.Crop
+    ) {
+        Box(Modifier.size(size.dp).background(color, CircleShape), contentAlignment = Alignment.Center) {
+            Text(
+                name.take(1).uppercase(),
+                color = Color.White,
+                fontWeight = FontWeight.Bold,
+                style = MaterialTheme.typography.titleMedium
+            )
+        }
     }
 }

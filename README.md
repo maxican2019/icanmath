@@ -22,6 +22,10 @@ Aplikasi Android latihan matematika untuk kelas 1 SD sampai 12 SMA. Tanpa login:
 - Cetak soal ke PDF A4 (dengan kunci jawaban opsional), dibagikan lewat share sheet Android.
 - Cadangan dan pulihkan data lewat file JSON (simpan, bagikan, impor).
 
+## Mengganti gambar
+
+Semua gambar di aplikasi adalah slot bernama yang bisa ditimpa dengan PNG tanpa mengubah kode. Lihat `docs/IMAGE_SLOTS.md` untuk daftar, ukuran, dan caranya. Sumber desain ada di `design/source/`.
+
 ## Build pertama
 
 1. Buka folder ini di Android Studio (versi terbaru yang mendukung AGP 8.13) dengan JDK 17 atau lebih baru.

@@ -1,5 +1,6 @@
 package com.icanmath.app.ui
 
+import androidx.compose.foundation.layout.size
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
@@ -103,21 +104,21 @@ fun ModeSelectScreen(vm: AppViewModel, nav: NavHostController, grade: Int) {
         nav.navigate("quiz")
     }
     AppScaffold("Kelas $grade (${Stats.gradeLabel(grade)})", { nav.popBackStack() }) {
-        ModeCard("🎲", "Soal acak", "Soal baru dibuat tiap mulai, tidak akan habis") { start("RANDOM") }
-        if (mcq > 0) ModeCard("🎯", "Pilihan ganda", "$mcq soal tetap dengan pembahasan") { start("MCQ") }
-        if (story > 0) ModeCard("📖", "Soal cerita", "$story soal cerita dengan kata kunci") { start("STORY") }
+        ModeCard("🎲", Slot.MODE_RANDOM, "Soal acak", "Soal baru dibuat tiap mulai, tidak akan habis") { start("RANDOM") }
+        if (mcq > 0) ModeCard("🎯", Slot.MODE_MCQ, "Pilihan ganda", "$mcq soal tetap dengan pembahasan") { start("MCQ") }
+        if (story > 0) ModeCard("📖", Slot.MODE_STORY, "Soal cerita", "$story soal cerita dengan kata kunci") { start("STORY") }
     }
 }
 
 @Composable
-private fun ModeCard(emoji: String, title: String, desc: String, onClick: () -> Unit) {
+private fun ModeCard(emoji: String, slot: String, title: String, desc: String, onClick: () -> Unit) {
     ElevatedCard(onClick = onClick, modifier = Modifier.fillMaxWidth()) {
         Row(
             modifier = Modifier.padding(16.dp).fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            Text(emoji, fontSize = 32.sp)
+            SlotImage(slot, Modifier.size(44.dp)) { Text(emoji, fontSize = 32.sp) }
             Column {
                 Text(title, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
                 Text(desc, style = MaterialTheme.typography.bodyMedium)
@@ -216,12 +217,14 @@ private fun QuizContent(vm: AppViewModel, nav: NavHostController, quiz: QuizStat
         )
         if (combo >= 2) {
             Surface(shape = RoundedCornerShape(20.dp), color = Color(0xFFFFE8CC)) {
-                Text(
-                    "🔥 $combo beruntun! Teruskan!",
+                Row(
                     modifier = Modifier.padding(horizontal = 14.dp, vertical = 6.dp),
-                    color = Color(0xFF7A3E00),
-                    fontWeight = FontWeight.Bold
-                )
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(6.dp)
+                ) {
+                    SlotImage(Slot.STREAK, Modifier.size(20.dp)) { Text("🔥") }
+                    Text("$combo beruntun! Teruskan!", color = Color(0xFF7A3E00), fontWeight = FontWeight.Bold)
+                }
             }
         }
         vm.notice?.let { Text(it, color = MaterialTheme.colorScheme.secondary) }
@@ -311,15 +314,17 @@ fun ResultScreen(vm: AppViewModel, nav: NavHostController) {
                     animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy),
                     label = "star$i"
                 )
-                Text(
-                    if (earned) "⭐" else "☆",
-                    fontSize = 52.sp,
-                    modifier = Modifier.graphicsLayer {
+                Box(
+                    Modifier.graphicsLayer {
                         scaleX = scale
                         scaleY = scale
                         alpha = if (visible) 1f else 0f
                     }
-                )
+                ) {
+                    SlotImage(if (earned) Slot.STAR_ON else Slot.STAR_OFF, Modifier.size(56.dp)) {
+                        Text(if (earned) "⭐" else "☆", fontSize = 52.sp)
+                    }
+                }
             }
         }
         Text(
