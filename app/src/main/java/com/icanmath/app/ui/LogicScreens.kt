@@ -1,5 +1,8 @@
 package com.icanmath.app.ui
 
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeOut
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.slideInVertically
@@ -106,46 +109,35 @@ fun LogicMenuScreen(vm: AppViewModel, nav: NavHostController) {
     val data by vm.data.collectAsState()
     val p = data.profiles.firstOrNull { it.id == data.activeProfileId }
     val medals = if (p != null) Medals.logic(data.logicPlays, p.id) else emptyList()
-    fun status(i: Int): String = medals.getOrNull(i)?.let { "${it.tier.label} · ${it.detail}" } ?: ""
+    fun status(i: Int): String? = medals.getOrNull(i)?.let { "🏅 ${it.tier.label} · ${it.detail}" }
 
-    AppScaffold("Latihan Logika", { nav.popBackStack() }) {
-        LogicCard("🧩", Slot.LOGIC_PUZZLE, "Puzzle penjumlahan", "Isi angka yang hilang", status(0), true) { nav.navigate("puzzle") }
-        LogicCard("⚖️", Slot.LOGIC_COMPARE, "Lebih besar atau kecil", "Bandingkan jumlah dan angka", status(1), true) { nav.navigate("compare") }
-        LogicCard("🍎", Slot.LOGIC_GROUP, "Kelompokkan", "Kelompokkan buah", status(2), true) { nav.navigate("group") }
-        LogicCard("🎲", Slot.LOGIC_OTHER, "Permainan lain", "Pola dan timbangan, segera hadir", "", false) { }
+    FunScaffold(
+        "Latihan Logika", { nav.popBackStack() },
+        subtitle = "Asah otak sambil bermain!",
+        accent = Color(0xFF00695C), accent2 = Color(0xFF2E7D32),
+        headerSlot = Slot.MENU_LOGIKA, headerEmoji = "🧠"
+    ) {
+        FunCard(
+            "Puzzle penjumlahan", "Temukan angka yang hilang", "🧩", Slot.LOGIC_PUZZLE,
+            Color(0xFFC62828), Color(0xFFE64A19), index = 0, badge = status(0)
+        ) { nav.navigate("puzzle") }
+        FunCard(
+            "Lebih besar atau kecil", "Mana yang lebih banyak?", "⚖️", Slot.LOGIC_COMPARE,
+            Color(0xFF6A1B9A), Color(0xFF8E24AA), index = 1, badge = status(1)
+        ) { nav.navigate("compare") }
+        FunCard(
+            "Kelompokkan", "Pisahkan buah ke keranjangnya", "🍎", Slot.LOGIC_GROUP,
+            Color(0xFF2E7D32), Color(0xFF00897B), index = 2, badge = status(2)
+        ) { nav.navigate("group") }
+        FunCard(
+            "Permainan lain", "Pola dan timbangan, segera hadir!", "🎲", Slot.LOGIC_OTHER,
+            Color(0xFF78909C), Color(0xFF90A4AE), index = 3, badge = "Segera hadir", enabled = false
+        ) { }
         Text(
             "Medali logika terpisah dari medali latihan harian dan tidak memengaruhi ranking.",
             style = MaterialTheme.typography.bodySmall
         )
-        OutlinedButton(onClick = { nav.navigate("profile") }, modifier = Modifier.fillMaxWidth()) {
-            Text("Lihat medali")
-        }
-    }
-}
-
-@Composable
-private fun LogicCard(
-    emoji: String,
-    slot: String,
-    title: String,
-    desc: String,
-    status: String,
-    enabled: Boolean,
-    onClick: () -> Unit
-) {
-    ElevatedCard(onClick = onClick, enabled = enabled, modifier = Modifier.fillMaxWidth()) {
-        Row(
-            modifier = Modifier.padding(16.dp).fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            SlotImage(slot, Modifier.size(52.dp)) { Text(emoji, fontSize = 36.sp) }
-            Column(Modifier.weight(1f)) {
-                Text(title, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.secondary)
-                Text(desc, style = MaterialTheme.typography.bodyMedium)
-                if (status.isNotEmpty()) Text(status, style = MaterialTheme.typography.bodySmall)
-            }
-        }
+        FunButton("🏅 Lihat medali", Color(0xFFB26A00), Color(0xFFD48806)) { nav.navigate("profile") }
     }
 }
 
@@ -182,9 +174,15 @@ fun ChoiceGameScreen(
     var hint by remember { mutableStateOf(false) }
     var finished by remember { mutableStateOf(false) }
     var showExit by remember { mutableStateOf(false) }
+    var feedback by remember { mutableStateOf<FeedbackData?>(null) }
 
     if (finished) {
-        AppScaffold(title, { nav.popBackStack() }) {
+        FunScaffold(
+            title, { nav.popBackStack() },
+            subtitle = "Permainan selesai!",
+            accent = Color(0xFF00695C), accent2 = Color(0xFF2E7D32),
+            headerSlot = Slot.MENU_LOGIKA, headerEmoji = "🧠"
+        ) {
             GameSummary(vm, solved, items.size) { nav.popBackStack() }
         }
         return
@@ -203,30 +201,34 @@ fun ChoiceGameScreen(
             Column {
                 if (!checked) {
                     BottomActionBar("Periksa", selected >= 0) {
-                        checked = true
                         if (isCorrect) solved++
+                        feedback = FeedbackData(
+                            correct = isCorrect,
+                            answer = item.options[item.answerIndex],
+                            explanation = item.explanation,
+                            tip = item.tip,
+                            points = if (isCorrect) 10 else 0,
+                            nextLabel = if (last) "Selesai" else "Lanjut"
+                        )
+                        checked = true
                     }
                 }
-                AnimatedVisibility(
-                    visible = checked,
-                    enter = slideInVertically(initialOffsetY = { it }) + fadeIn()
-                ) {
-                    FeedbackPanel(
-                        correct = isCorrect,
-                        correctAnswer = item.options[item.answerIndex],
-                        explanation = item.explanation,
-                        tip = item.tip,
-                        points = 10,
-                        nextLabel = if (last) "Selesai" else "Lanjut"
+                feedback?.let { f ->
+                    AnimatedVisibility(
+                        visible = checked,
+                        enter = slideInVertically(initialOffsetY = { it }) + fadeIn(),
+                        exit = fadeOut(tween(90))
                     ) {
-                        if (last) {
-                            vm.saveLogic(game, solved, items.size)
-                            finished = true
-                        } else {
-                            idx++
-                            selected = -1
-                            checked = false
-                            hint = false
+                        FeedbackPanel(f.correct, f.answer, f.explanation, f.tip, f.points, f.nextLabel) {
+                            if (last) {
+                                vm.saveLogic(game, solved, items.size)
+                                finished = true
+                            } else {
+                                idx++
+                                selected = -1
+                                checked = false
+                                hint = false
+                            }
                         }
                     }
                 }
@@ -347,10 +349,15 @@ fun GroupGameScreen(vm: AppViewModel, nav: NavHostController) {
         mutableStateListOf<Int>().apply { repeat(types) { add(0) } }
     }
 
-    AppScaffold("Kelompokkan Buah", { nav.popBackStack() }) {
+    FunScaffold(
+        "Kelompokkan Buah", { nav.popBackStack() },
+        subtitle = "Ketuk buah, lalu ketuk keranjangnya",
+        accent = Color(0xFF2E7D32), accent2 = Color(0xFF00897B),
+        headerSlot = Slot.LOGIC_GROUP, headerEmoji = "🍎"
+    ) {
         if (finished) {
             GameSummary(vm, roundsOk, 3) { nav.popBackStack() }
-            return@AppScaffold
+            return@FunScaffold
         }
         Text("Ronde ${round + 1} dari 3", fontWeight = FontWeight.SemiBold)
         Text(message)

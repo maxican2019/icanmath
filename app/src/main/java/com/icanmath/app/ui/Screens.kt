@@ -1,5 +1,12 @@
 package com.icanmath.app.ui
 
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.Shadow
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.RepeatMode
@@ -62,90 +69,109 @@ private val Indigo = Color(0xFF3949AB)
 private val IndigoDark = Color(0xFF1A237E)
 
 @Composable
+private fun BoxScope.FloatingSymbol(
+    text: String,
+    color: Color,
+    x: Dp,
+    y: Dp,
+    size: Int,
+    bob: Float,
+    dir: Float,
+    spin: Float,
+    baseRotation: Float
+) {
+    Text(
+        text,
+        modifier = Modifier
+            .align(Alignment.TopStart)
+            .offset(x = x, y = y + (bob * dir * 12f).dp)
+            .graphicsLayer { rotationZ = baseRotation + spin * dir },
+        color = color,
+        fontSize = size.sp,
+        fontWeight = FontWeight.Black,
+        style = TextStyle(shadow = Shadow(color = color.copy(alpha = 0.85f), offset = Offset.Zero, blurRadius = 30f))
+    )
+}
+
+@Composable
 fun HomeScreen(vm: AppViewModel, nav: NavHostController) {
     val data by vm.data.collectAsState()
     val restore = rememberRestoreAction(vm)
-    val transition = rememberInfiniteTransition(label = "bob")
+    val hasBg = rememberSlotExists(Slot.HOME_BG)
+    val transition = rememberInfiniteTransition(label = "home")
     val bob by transition.animateFloat(
-        initialValue = -14f,
-        targetValue = 14f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(1300, easing = FastOutSlowInEasing),
-            repeatMode = RepeatMode.Reverse
-        ),
-        label = "bobValue"
+        initialValue = -1f,
+        targetValue = 1f,
+        animationSpec = infiniteRepeatable(tween(2400, easing = FastOutSlowInEasing), RepeatMode.Reverse),
+        label = "bob"
     )
-    val symbolColors = listOf(Color(0xFF7986CB), Color(0xFF4DB6AC), Color(0xFFFFB74D), Color(0xFFE57373))
+    val spin by transition.animateFloat(
+        initialValue = -6f,
+        targetValue = 6f,
+        animationSpec = infiniteRepeatable(tween(3200, easing = FastOutSlowInEasing), RepeatMode.Reverse),
+        label = "spin"
+    )
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Brush.verticalGradient(listOf(Indigo, IndigoDark)))
-            .systemBarsPadding()
-    ) {
-        SlotImage(Slot.HOME_BG, Modifier.fillMaxSize(), contentScale = ContentScale.Crop) {}
-        // Hiasan simbol besar berwarna samar di latar belakang.
-        Text("÷", fontSize = 120.sp, color = Color.White.copy(alpha = 0.10f),
-            modifier = Modifier.align(Alignment.TopEnd).offset(x = 16.dp, y = (40 + bob).dp))
-        Text("×", fontSize = 100.sp, color = Color.White.copy(alpha = 0.10f),
-            modifier = Modifier.align(Alignment.BottomStart).offset(x = (-8).dp, y = (-40 - bob).dp))
-        Text("+", fontSize = 90.sp, color = Color.White.copy(alpha = 0.08f),
-            modifier = Modifier.align(Alignment.CenterStart).offset(x = (-20).dp, y = (-120 + bob).dp))
+    Box(Modifier.fillMaxSize()) {
+        // Latar: gambar kustom jika ada, jika tidak memakai latar luar angkasa buatan kode.
+        SlotImage(Slot.HOME_BG, Modifier.fillMaxSize(), contentScale = ContentScale.Crop) { SpaceBackground() }
 
-        Column(
-            modifier = Modifier.fillMaxSize().padding(28.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            SlotImage(Slot.HOME_MASCOT, Modifier.size(220.dp)) {
-            Row(horizontalArrangement = Arrangement.spacedBy(14.dp)) {
-                listOf("+", "−", "×", "÷").forEachIndexed { i, symbol ->
-                    val dy = if (i % 2 == 0) bob else -bob
-                    Box(
-                        modifier = Modifier
-                            .offset(y = dy.dp)
-                            .size(68.dp)
-                            .background(symbolColors[i], CircleShape),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(symbol, fontSize = 34.sp, color = Color.White, fontWeight = FontWeight.Bold)
-                    }
-                }
+        BoxWithConstraints(Modifier.fillMaxSize().systemBarsPadding()) {
+            val w = maxWidth
+            val h = maxHeight
+            if (!hasBg) {
+                FloatingSymbol("1", Color(0xFFB388FF), w * 0.10f, h * 0.07f, 72, bob, 1f, spin, -12f)
+                FloatingSymbol("2", Color(0xFF4FC3F7), w * 0.46f, h * 0.03f, 70, bob, -1f, spin, 8f)
+                FloatingSymbol("+", Color(0xFFFF5252), w * 0.28f, h * 0.15f, 88, bob, -1f, spin, 0f)
+                FloatingSymbol("×", Color(0xFF69F0AE), w * 0.56f, h * 0.15f, 88, bob, 1f, spin, 0f)
+                FloatingSymbol("1", Color(0xFFFFB74D), w * 0.04f, h * 0.26f, 88, bob, -1f, spin, -6f)
+                FloatingSymbol("×", Color(0xFF40C4FF), w * 0.28f, h * 0.27f, 88, bob, 1f, spin, 0f)
+                FloatingSymbol("÷", Color(0xFFFFD740), w * 0.56f, h * 0.27f, 88, bob, -1f, spin, 0f)
+                FloatingSymbol("3", Color(0xFFFFA726), w * 0.80f, h * 0.24f, 80, bob, 1f, spin, 10f)
+                FloatingSymbol("📐", Color(0xFFE040FB), w * 0.08f, h * 0.41f, 52, bob, 1f, spin, -8f)
+                FloatingSymbol("🎲", Color(0xFF40C4FF), w * 0.42f, h * 0.42f, 52, bob, -1f, spin, 6f)
+                FloatingSymbol("🧮", Color(0xFFFFAB40), w * 0.74f, h * 0.41f, 52, bob, 1f, spin, 10f)
             }
-            }
-            Spacer(Modifier.height(32.dp))
-            SlotImage(Slot.HOME_LOGO, Modifier.fillMaxWidth().height(72.dp)) {
-                Text("icanmath", fontSize = 44.sp, color = Color.White, fontWeight = FontWeight.ExtraBold)
-            }
-            Spacer(Modifier.height(6.dp))
-            Text(
-                "Belajar berhitung jadi permainan seru",
-                color = Color.White.copy(alpha = 0.85f),
-                textAlign = TextAlign.Center,
-                style = MaterialTheme.typography.bodyLarge
-            )
-            Spacer(Modifier.height(44.dp))
-            Button(
-                onClick = {
+
+            Column(
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .fillMaxWidth()
+                    .padding(horizontal = 28.dp, vertical = 24.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    "icanmath",
+                    fontSize = 48.sp,
+                    color = Color.White,
+                    fontWeight = FontWeight.Black,
+                    style = TextStyle(shadow = Shadow(color = Color(0xFF80D8FF), offset = Offset.Zero, blurRadius = 32f))
+                )
+                Spacer(Modifier.height(4.dp))
+                Text(
+                    "Belajar berhitung jadi permainan seru",
+                    color = Color.White.copy(alpha = 0.9f),
+                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.bodyLarge
+                )
+                Spacer(Modifier.height(28.dp))
+                FunButton("Masuk", Color(0xFFFFB300), Color(0xFFFF6F00)) {
                     if (data.profiles.isEmpty()) nav.navigate("profileform") else nav.navigate("dashboard")
-                },
-                colors = ButtonDefaults.buttonColors(containerColor = Color.White, contentColor = Indigo),
-                shape = RoundedCornerShape(18.dp),
-                modifier = Modifier.fillMaxWidth().height(58.dp)
-            ) { Text("Masuk", fontSize = 18.sp, fontWeight = FontWeight.Bold) }
-            Spacer(Modifier.height(12.dp))
-            OutlinedButton(
-                onClick = { nav.navigate("settings") },
-                colors = ButtonDefaults.outlinedButtonColors(contentColor = Color.White),
-                border = BorderStroke(1.5.dp, Color.White.copy(alpha = 0.8f)),
-                shape = RoundedCornerShape(18.dp),
-                modifier = Modifier.fillMaxWidth().height(54.dp)
-            ) { Text("Setting", fontSize = 16.sp) }
-            Spacer(Modifier.height(8.dp))
-            TextButton(
-                onClick = restore,
-                colors = ButtonDefaults.textButtonColors(contentColor = Color.White)
-            ) { Text("Pulihkan dari file cadangan") }
+                }
+                Spacer(Modifier.height(12.dp))
+                OutlinedButton(
+                    onClick = { nav.navigate("settings") },
+                    colors = ButtonDefaults.outlinedButtonColors(contentColor = Color.White),
+                    border = BorderStroke(1.5.dp, Color.White.copy(alpha = 0.8f)),
+                    shape = RoundedCornerShape(20.dp),
+                    modifier = Modifier.fillMaxWidth().height(54.dp)
+                ) { Text("Setting", fontSize = 16.sp) }
+                Spacer(Modifier.height(4.dp))
+                TextButton(
+                    onClick = restore,
+                    colors = ButtonDefaults.textButtonColors(contentColor = Color.White)
+                ) { Text("Pulihkan dari file cadangan") }
+            }
         }
     }
 }
@@ -155,10 +181,18 @@ fun ProfileFormScreen(vm: AppViewModel, nav: NavHostController) {
     var name by remember { mutableStateOf("") }
     var age by remember { mutableIntStateOf(8) }
     var grade by remember { mutableIntStateOf(2) }
+    var avatar by remember { mutableIntStateOf(1) }
     var error by remember { mutableStateOf(false) }
 
-    AppScaffold("Profil Baru", { nav.popBackStack() }) {
+    FunScaffold(
+        "Profil Baru", { nav.popBackStack() },
+        subtitle = "Kenalan dulu, yuk!",
+        accent = Color(0xFF6A1B9A), accent2 = Color(0xFF8E24AA),
+        headerSlot = Slot.MENU_PROFIL, headerEmoji = "👨‍👩‍👧"
+    ) {
         Text("Data hanya tersimpan di perangkat ini. Tanpa akun.")
+        Text("Pilih avatar", fontWeight = FontWeight.Bold)
+        AvatarPicker(avatar) { avatar = it }
         OutlinedTextField(
             value = name,
             onValueChange = { name = it.take(20); error = false },
@@ -166,27 +200,25 @@ fun ProfileFormScreen(vm: AppViewModel, nav: NavHostController) {
             singleLine = true,
             isError = error,
             supportingText = { if (error) Text("Nama wajib diisi") },
+            shape = RoundedCornerShape(16.dp),
             modifier = Modifier.fillMaxWidth()
         )
-        Text("Umur", fontWeight = FontWeight.SemiBold)
+        Text("Umur", fontWeight = FontWeight.Bold)
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(16.dp)) {
             OutlinedButton(onClick = { if (age > 5) age-- }) { Text("−") }
             Text("$age tahun", style = MaterialTheme.typography.titleLarge)
             OutlinedButton(onClick = { if (age < 20) age++ }) { Text("+") }
         }
-        Text("Kelas", fontWeight = FontWeight.SemiBold)
+        Text("Kelas", fontWeight = FontWeight.Bold)
         GradeChips(grade) { grade = it }
-        Button(
-            onClick = {
-                if (name.isBlank()) {
-                    error = true
-                } else {
-                    vm.addProfile(name.trim(), age, grade)
-                    nav.navigate("dashboard") { popUpTo("home") }
-                }
-            },
-            modifier = Modifier.fillMaxWidth().height(52.dp)
-        ) { Text("Simpan") }
+        FunButton("Simpan", Color(0xFF6A1B9A), Color(0xFF8E24AA)) {
+            if (name.isBlank()) {
+                error = true
+            } else {
+                vm.addProfile(name.trim(), age, grade, avatar)
+                nav.navigate("dashboard") { popUpTo("home") }
+            }
+        }
     }
 }
 
@@ -240,7 +272,7 @@ fun DashboardScreen(vm: AppViewModel, nav: NavHostController) {
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.spacedBy(10.dp)
                         ) {
-                            Avatar(p.name)
+                            Avatar(p.name, avatar = p.avatar)
                             Column {
                                 Row(verticalAlignment = Alignment.CenterVertically) {
                                     Text(p.name, fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleMedium)
@@ -329,7 +361,7 @@ fun DashboardScreen(vm: AppViewModel, nav: NavHostController) {
                             Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                                 val rankSlot = when (i) { 0 -> Slot.RANK_1; 1 -> Slot.RANK_2; 2 -> Slot.RANK_3; else -> "" }
                                 SlotImage(rankSlot, Modifier.size(28.dp)) { Text(medal, fontSize = 20.sp) }
-                                Avatar(profile.name, 32)
+                                Avatar(profile.name, 32, profile.avatar)
                                 Text(
                                     profile.name + if (profile.id == p.id) " (aktif)" else "",
                                     modifier = Modifier.weight(1f)
@@ -369,7 +401,7 @@ fun DashboardScreen(vm: AppViewModel, nav: NavHostController) {
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.spacedBy(12.dp)
                         ) {
-                            Avatar(pr.name, 44)
+                            Avatar(pr.name, 44, pr.avatar)
                             Column(Modifier.weight(1f)) {
                                 Text(pr.name, fontWeight = FontWeight.Bold)
                                 Text("${Stats.gradeLabel(pr.grade)} · ${pr.age} tahun", style = MaterialTheme.typography.bodySmall)

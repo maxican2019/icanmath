@@ -1,5 +1,14 @@
 package com.icanmath.app.ui
 
+import com.icanmath.app.Tier
+import com.icanmath.app.Medal
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.Column
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.sp
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Surface
+import androidx.compose.ui.graphics.Color
 import android.net.Uri
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -48,26 +57,98 @@ import java.time.LocalDate
 import kotlin.random.Random
 
 @Composable
+private fun StatChip(emoji: String, value: String, label: String, modifier: Modifier = Modifier) {
+    Surface(modifier = modifier, shape = RoundedCornerShape(20.dp), color = MaterialTheme.colorScheme.surfaceVariant) {
+        Row(
+            modifier = Modifier.padding(14.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
+            Text(emoji, fontSize = 28.sp)
+            Column {
+                Text(value, fontWeight = FontWeight.ExtraBold, style = MaterialTheme.typography.titleMedium)
+                Text(label, style = MaterialTheme.typography.bodySmall)
+            }
+        }
+    }
+}
+
+@Composable
+private fun MedalCard(m: Medal, modifier: Modifier = Modifier) {
+    val earned = m.tier != Tier.NONE
+    Surface(
+        modifier = modifier,
+        shape = RoundedCornerShape(22.dp),
+        color = if (earned) Color(0xFFFFF3D6) else MaterialTheme.colorScheme.surfaceVariant
+    ) {
+        Column(
+            modifier = Modifier.fillMaxWidth().padding(14.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(4.dp)
+        ) {
+            TierBadge(m.tier, 76)
+            Text(
+                m.title,
+                fontWeight = FontWeight.ExtraBold,
+                textAlign = TextAlign.Center,
+                color = if (earned) Color(0xFF5D4037) else MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            Text(
+                m.tier.label,
+                fontWeight = FontWeight.Bold,
+                color = if (earned) Color(0xFF8A5A00) else MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            Text(
+                m.detail,
+                style = MaterialTheme.typography.bodySmall,
+                textAlign = TextAlign.Center,
+                color = if (earned) Color(0xFF5D4037) else MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
+    }
+}
+
+@Composable
 fun ProfileScreen(vm: AppViewModel, nav: NavHostController) {
     val data by vm.data.collectAsState()
     val p = data.profiles.firstOrNull { it.id == data.activeProfileId }
     var deleteId by remember { mutableStateOf<String?>(null) }
 
-    AppScaffold("Profil dan Medali", { nav.popBackStack() }) {
+    FunScaffold(
+        "Medali Saya", { nav.popBackStack() },
+        subtitle = if (p != null) "${p.name} · ${Stats.gradeLabel(p.grade)} · ${p.age} tahun" else null,
+        accent = Color(0xFFB26A00), accent2 = Color(0xFFD48806),
+        headerSlot = Slot.MENU_MEDALI, headerEmoji = "🏅"
+    ) {
         if (p == null) {
             Text("Belum ada profil.")
-            return@AppScaffold
+            return@FunScaffold
         }
         val today = LocalDate.now()
         val streak = Stats.currentStreak(Stats.dailyDates(data.sessions, p.id), today)
-        Text(p.name, style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Bold)
-        Text("${Stats.gradeLabel(p.grade)} · ${p.age} tahun")
-        Text("Poin minggu ini: ${Stats.weeklyPoints(data.sessions, p.id, today)} · Streak: $streak hari")
+        val weekly = Stats.weeklyPoints(data.sessions, p.id, today)
+        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+            StatChip("⭐", "$weekly poin", "minggu ini", Modifier.weight(1f))
+            StatChip("🔥", "$streak hari", "streak", Modifier.weight(1f))
+        }
+
+        Text("Avatar", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+        AvatarPicker(p.avatar) { vm.setAvatar(p.id, it) }
 
         Text("Medali latihan", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
-        Medals.practice(data.sessions, p.id).forEach { MedalRow(it) }
+        Medals.practice(data.sessions, p.id).chunked(2).forEach { pair ->
+            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                pair.forEach { MedalCard(it, Modifier.weight(1f)) }
+                if (pair.size == 1) Spacer(Modifier.weight(1f))
+            }
+        }
         Text("Medali logika", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
-        Medals.logic(data.logicPlays, p.id).forEach { MedalRow(it) }
+        Medals.logic(data.logicPlays, p.id).chunked(2).forEach { pair ->
+            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                pair.forEach { MedalCard(it, Modifier.weight(1f)) }
+                if (pair.size == 1) Spacer(Modifier.weight(1f))
+            }
+        }
 
         if (data.profiles.size > 1) {
             HorizontalDivider()
@@ -75,16 +156,16 @@ fun ProfileScreen(vm: AppViewModel, nav: NavHostController) {
             data.profiles.forEach { pr ->
                 Row(
                     Modifier.fillMaxWidth().clickable { vm.setActive(pr.id) },
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     RadioButton(selected = pr.id == p.id, onClick = { vm.setActive(pr.id) })
+                    Avatar(pr.name, 36, pr.avatar)
                     Text("${pr.name} · ${Stats.gradeLabel(pr.grade)}")
                 }
             }
         }
-        OutlinedButton(onClick = { nav.navigate("profileform") }, modifier = Modifier.fillMaxWidth()) {
-            Text("Tambah profil")
-        }
+        FunButton("+ Tambah profil", Color(0xFF6A1B9A), Color(0xFF8E24AA)) { nav.navigate("profileform") }
         TextButton(onClick = { deleteId = p.id }) { Text("Hapus profil ini") }
     }
 
@@ -129,7 +210,12 @@ fun SettingsScreen(vm: AppViewModel, nav: NavHostController) {
         }
     }
 
-    AppScaffold("Pengaturan", { nav.popBackStack() }) {
+    FunScaffold(
+        "Pengaturan", { nav.popBackStack() },
+        subtitle = "Cadangan dan data",
+        accent = Color(0xFF37474F), accent2 = Color(0xFF546E7A),
+        headerSlot = Slot.MENU_SETTING, headerEmoji = "⚙️"
+    ) {
         Text("Cadangan data", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
         Text("ID backup: ${data.backupId.take(8)}")
         Text("File cadangan berisi semua profil, riwayat, dan medali. Bagikan file ini lalu pulihkan di perangkat baru. Tanpa enkripsi, simpan di tempat aman.")
@@ -197,7 +283,12 @@ fun PrintScreen(vm: AppViewModel, nav: NavHostController) {
     var withKey by remember { mutableStateOf(true) }
     var busy by remember { mutableStateOf(false) }
 
-    AppScaffold("Cetak Soal (PDF)", { nav.popBackStack() }) {
+    FunScaffold(
+        "Cetak Soal", { nav.popBackStack() },
+        subtitle = "Buat lembar soal PDF",
+        accent = Color(0xFF8D5A00), accent2 = Color(0xFFB7791F),
+        headerSlot = Slot.MENU_CETAK, headerEmoji = "🖨️"
+    ) {
         Text("Kelas", fontWeight = FontWeight.SemiBold)
         GradeChips(grade) { grade = it }
         Text("Jumlah soal", fontWeight = FontWeight.SemiBold)

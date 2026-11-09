@@ -41,6 +41,20 @@ import androidx.compose.ui.unit.sp
 
 enum class OptState { IDLE, SELECTED, CORRECT, WRONG, DIM }
 
+/**
+ * Isi panel hasil yang dibekukan saat jawaban diperiksa. Panel tidak boleh membaca state soal yang
+ * sedang tampil, karena saat animasi keluar soal sudah berpindah dan pilihan sudah dikosongkan
+ * (itulah yang dulu membuat panel "Belum tepat" muncul sesaat setelah jawaban benar).
+ */
+class FeedbackData(
+    val correct: Boolean,
+    val answer: String,
+    val explanation: String,
+    val tip: String,
+    val points: Int,
+    val nextLabel: String
+)
+
 private val GreenBg = Color(0xFFD7F2DC)
 private val GreenFg = Color(0xFF1B5E20)
 private val GreenAccent = Color(0xFF2E7D32)

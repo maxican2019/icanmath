@@ -17,7 +17,9 @@ data class Profile(
     val id: String,
     val name: String,
     val age: Int,
-    val grade: Int
+    val grade: Int,
+    /** 1..6 = avatar pilihan; 0 = otomatis dari nama (data lama). */
+    val avatar: Int = 0
 )
 
 /** kind: DAILY, RANDOM, MCQ, STORY */

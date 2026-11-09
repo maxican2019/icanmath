@@ -16,8 +16,9 @@ import androidx.compose.ui.res.painterResource
  */
 object Slot {
     const val HOME_BG = "img_home_bg"
-    const val HOME_LOGO = "img_home_logo"
-    const val HOME_MASCOT = "img_home_mascot"
+    const val LEVEL_SD = "img_level_sd"
+    const val LEVEL_SMP = "img_level_smp"
+    const val LEVEL_SMA = "img_level_sma"
     const val MENU_SOAL = "img_menu_soal"
     const val MENU_LOGIKA = "img_menu_logika"
     const val MENU_CETAK = "img_menu_cetak"
@@ -76,4 +77,11 @@ fun SlotImage(
     } else {
         fallback()
     }
+}
+
+/** Mengembalikan true jika berkas gambar untuk slot [name] ada. */
+@Composable
+fun rememberSlotExists(name: String): Boolean {
+    val ctx = LocalContext.current
+    return remember(name) { ctx.resources.getIdentifier(name, "drawable", ctx.packageName) != 0 }
 }

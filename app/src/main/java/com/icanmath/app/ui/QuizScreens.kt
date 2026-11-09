@@ -1,5 +1,8 @@
 package com.icanmath.app.ui
 
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.size
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Spring
@@ -58,36 +61,56 @@ import com.icanmath.app.QuizState
 import com.icanmath.app.Stats
 import kotlinx.coroutines.delay
 
-@OptIn(ExperimentalLayoutApi::class)
+private class Level(
+    val label: String,
+    val emoji: String,
+    val slot: String,
+    val range: IntRange,
+    val c1: Color,
+    val c2: Color
+)
+
 @Composable
 fun ClassSelectScreen(vm: AppViewModel, nav: NavHostController) {
     val p = vm.activeProfile()
     val pg = p?.grade ?: 1
     var tab by remember { mutableIntStateOf(if (pg <= 6) 0 else if (pg <= 9) 1 else 2) }
-    val ranges = listOf(1..6, 7..9, 10..12)
+    val levels = listOf(
+        Level("SD", "🎒", Slot.LEVEL_SD, 1..6, Color(0xFFE65100), Color(0xFFEF6C00)),
+        Level("SMP", "📚", Slot.LEVEL_SMP, 7..9, Color(0xFF00695C), Color(0xFF00897B)),
+        Level("SMA", "🎓", Slot.LEVEL_SMA, 10..12, Color(0xFF6A1B9A), Color(0xFF8E24AA))
+    )
+    val lv = levels[tab]
 
-    AppScaffold("Pilih Kelas", { nav.popBackStack() }) {
-        TabRow(selectedTabIndex = tab) {
-            listOf("SD", "SMP", "SMA").forEachIndexed { i, t ->
-                Tab(selected = tab == i, onClick = { tab = i }, text = { Text(t) })
+    FunScaffold(
+        "Pilih Kelas", { nav.popBackStack() },
+        subtitle = "Mau latihan di kelas berapa?",
+        accent = lv.c1, accent2 = lv.c2,
+        headerSlot = Slot.MENU_SOAL, headerEmoji = "📝"
+    ) {
+        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+            levels.forEachIndexed { i, l ->
+                LevelTab(l.label, l.emoji, l.slot, tab == i, l.c1, Modifier.weight(1f)) { tab = i }
             }
         }
-        FlowRow(
-            horizontalArrangement = Arrangement.spacedBy(10.dp),
-            verticalArrangement = Arrangement.spacedBy(10.dp)
-        ) {
-            for (g in ranges[tab]) {
-                ElevatedButton(
-                    onClick = { nav.navigate("mode/$g") },
-                    modifier = Modifier.width(104.dp).height(80.dp)
-                ) { Text("Kelas $g") }
+        lv.range.toList().chunked(3).forEachIndexed { r, rowGrades ->
+            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                rowGrades.forEachIndexed { c, g ->
+                    GradeTile(g, p?.grade == g, lv.c1, lv.c2, r * 3 + c, Modifier.weight(1f)) {
+                        nav.navigate("mode/$g")
+                    }
+                }
+                repeat(3 - rowGrades.size) { Spacer(Modifier.weight(1f)) }
             }
         }
         if (p != null) {
-            Text(
-                "Kelas kamu: ${Stats.gradeLabel(p.grade)}. Latihan di kelas lain tidak masuk ranking dan medali, tetap tercatat di riwayat.",
-                style = MaterialTheme.typography.bodyMedium
-            )
+            Surface(shape = RoundedCornerShape(18.dp), color = MaterialTheme.colorScheme.surfaceVariant) {
+                Text(
+                    "⭐ Kelas kamu: ${Stats.gradeLabel(p.grade)}. Latihan di kelas lain tetap seru, tetapi tidak masuk ranking dan medali.",
+                    modifier = Modifier.padding(14.dp),
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            }
         }
     }
 }
@@ -103,26 +126,27 @@ fun ModeSelectScreen(vm: AppViewModel, nav: NavHostController, grade: Int) {
         vm.startQuiz(kind, grade)
         nav.navigate("quiz")
     }
-    AppScaffold("Kelas $grade (${Stats.gradeLabel(grade)})", { nav.popBackStack() }) {
-        ModeCard("🎲", Slot.MODE_RANDOM, "Soal acak", "Soal baru dibuat tiap mulai, tidak akan habis") { start("RANDOM") }
-        if (mcq > 0) ModeCard("🎯", Slot.MODE_MCQ, "Pilihan ganda", "$mcq soal tetap dengan pembahasan") { start("MCQ") }
-        if (story > 0) ModeCard("📖", Slot.MODE_STORY, "Soal cerita", "$story soal cerita dengan kata kunci") { start("STORY") }
-    }
-}
-
-@Composable
-private fun ModeCard(emoji: String, slot: String, title: String, desc: String, onClick: () -> Unit) {
-    ElevatedCard(onClick = onClick, modifier = Modifier.fillMaxWidth()) {
-        Row(
-            modifier = Modifier.padding(16.dp).fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            SlotImage(slot, Modifier.size(44.dp)) { Text(emoji, fontSize = 32.sp) }
-            Column {
-                Text(title, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
-                Text(desc, style = MaterialTheme.typography.bodyMedium)
-            }
+    FunScaffold(
+        "Kelas $grade", { nav.popBackStack() },
+        subtitle = "${Stats.gradeLabel(grade)} · Pilih cara mainmu",
+        accent = Color(0xFF3949AB), accent2 = Color(0xFF5E35B1),
+        headerSlot = Slot.MENU_SOAL, headerEmoji = "📝"
+    ) {
+        FunCard(
+            "Soal acak", "Soal baru tiap main, tidak akan habis!", "🎲", Slot.MODE_RANDOM,
+            Color(0xFFD84315), Color(0xFFC2185B), index = 0, badge = "∞ soal"
+        ) { start("RANDOM") }
+        if (mcq > 0) {
+            FunCard(
+                "Pilihan ganda", "Pilih jawabannya, lalu belajar dari pembahasan", "🎯", Slot.MODE_MCQ,
+                Color(0xFF3949AB), Color(0xFF5E35B1), index = 1, badge = "$mcq soal"
+            ) { start("MCQ") }
+        }
+        if (story > 0) {
+            FunCard(
+                "Soal cerita", "Cari kata kuncinya, lalu hitung!", "📖", Slot.MODE_STORY,
+                Color(0xFF00695C), Color(0xFF2E7D32), index = 2, badge = "$story soal"
+            ) { start("STORY") }
         }
     }
 }
@@ -146,7 +170,7 @@ private fun QuizContent(vm: AppViewModel, nav: NavHostController, quiz: QuizStat
     var correct by remember { mutableIntStateOf(0) }
     var combo by remember { mutableIntStateOf(0) }
     var points by remember { mutableIntStateOf(0) }
-    var gained by remember { mutableIntStateOf(0) }
+    var feedback by remember { mutableStateOf<FeedbackData?>(null) }
     var showExit by remember { mutableStateOf(false) }
     val wrong = remember { mutableStateListOf<Question>() }
     val haptic = LocalHapticFeedback.current
@@ -171,39 +195,44 @@ private fun QuizContent(vm: AppViewModel, nav: NavHostController, quiz: QuizStat
             Column {
                 if (!checked) {
                     BottomActionBar("Periksa", selected >= 0) {
-                        checked = true
+                        val earned: Int
                         if (isCorrect) {
                             correct++
                             combo++
-                            gained = 10 + if (combo >= 3) 5 else 0
-                            points += gained
+                            earned = 10 + if (combo >= 3) 5 else 0
+                            points += earned
                         } else {
                             combo = 0
-                            gained = 0
+                            earned = 0
                             wrong.add(q)
                             haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                         }
+                        feedback = FeedbackData(
+                            correct = isCorrect,
+                            answer = q.options[q.answerIndex],
+                            explanation = q.explanation,
+                            tip = q.tip,
+                            points = earned,
+                            nextLabel = if (last) "Lihat hasil" else "Lanjut"
+                        )
+                        checked = true
                     }
                 }
-                AnimatedVisibility(
-                    visible = checked,
-                    enter = slideInVertically(initialOffsetY = { it }) + fadeIn()
-                ) {
-                    FeedbackPanel(
-                        correct = isCorrect,
-                        correctAnswer = q.options[q.answerIndex],
-                        explanation = q.explanation,
-                        tip = q.tip,
-                        points = gained,
-                        nextLabel = if (last) "Lihat hasil" else "Lanjut"
+                feedback?.let { f ->
+                    AnimatedVisibility(
+                        visible = checked,
+                        enter = slideInVertically(initialOffsetY = { it }) + fadeIn(),
+                        exit = fadeOut(tween(90))
                     ) {
-                        if (last) {
-                            vm.finishQuiz(correct, wrong.toList())
-                            nav.navigate("result") { popUpTo("quiz") { inclusive = true } }
-                        } else {
-                            idx++
-                            selected = -1
-                            checked = false
+                        FeedbackPanel(f.correct, f.answer, f.explanation, f.tip, f.points, f.nextLabel) {
+                            if (last) {
+                                vm.finishQuiz(correct, wrong.toList())
+                                nav.navigate("result") { popUpTo("quiz") { inclusive = true } }
+                            } else {
+                                idx++
+                                selected = -1
+                                checked = false
+                            }
                         }
                     }
                 }

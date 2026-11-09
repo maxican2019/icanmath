@@ -45,9 +45,13 @@ class AppViewModel(app: Application) : AndroidViewModel(app) {
         return d.profiles.firstOrNull { it.id == d.activeProfileId }
     }
 
-    fun addProfile(name: String, age: Int, grade: Int) {
-        val p = Profile(UUID.randomUUID().toString(), name, age, grade)
+    fun addProfile(name: String, age: Int, grade: Int, avatar: Int) {
+        val p = Profile(UUID.randomUUID().toString(), name, age, grade, avatar)
         repo.update { it.copy(profiles = it.profiles + p, activeProfileId = p.id) }
+    }
+
+    fun setAvatar(id: String, avatar: Int) {
+        repo.update { d -> d.copy(profiles = d.profiles.map { if (it.id == id) it.copy(avatar = avatar) else it }) }
     }
 
     fun setActive(id: String) {

@@ -92,7 +92,7 @@ fun GradeChips(selected: Int, onSelect: (Int) -> Unit) {
 }
 
 @Composable
-fun TierBadge(tier: Tier) {
+fun TierBadge(tier: Tier, size: Int = 44) {
     val color = when (tier) {
         Tier.BRONZE -> Color(0xFF8A5A2B)
         Tier.SILVER -> Color(0xFF5F6B7A)
@@ -105,8 +105,8 @@ fun TierBadge(tier: Tier) {
         Tier.GOLD -> Slot.MEDAL_GOLD
         Tier.NONE -> Slot.MEDAL_LOCKED
     }
-    SlotImage(slot, Modifier.size(44.dp)) {
-        Box(Modifier.size(44.dp).background(color, CircleShape), contentAlignment = Alignment.Center) {
+    SlotImage(slot, Modifier.size(size.dp)) {
+        Box(Modifier.size(size.dp).background(color, CircleShape), contentAlignment = Alignment.Center) {
             Text(tier.letter, color = Color.White, fontWeight = FontWeight.Bold)
         }
     }
@@ -158,12 +158,12 @@ fun rememberRestoreAction(vm: AppViewModel): () -> Unit {
 
 /** Avatar bulat berisi huruf pertama nama; warna ditentukan dari nama supaya tiap profil berbeda. */
 @Composable
-fun Avatar(name: String, size: Int = 40) {
+fun Avatar(name: String, size: Int = 40, avatar: Int = 0) {
     val palette = listOf(
         Color(0xFF3949AB), Color(0xFF00796B), Color(0xFFB7791F),
         Color(0xFFC62828), Color(0xFF6A1B9A), Color(0xFF00838F)
     )
-    val idx = Math.abs(name.hashCode()) % palette.size
+    val idx = if (avatar in 1..palette.size) avatar - 1 else Math.abs(name.hashCode()) % palette.size
     val color = palette[idx]
     SlotImage(
         "img_avatar_${idx + 1}",
