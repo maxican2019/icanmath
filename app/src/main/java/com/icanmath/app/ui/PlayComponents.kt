@@ -223,7 +223,7 @@ fun FeedbackPanel(
             ) {
                 SlotImage(if (correct) Slot.FEEDBACK_CORRECT else Slot.FEEDBACK_WRONG, Modifier.size(56.dp)) {}
                 Text(
-                    if (correct) "✓ Benar! +$points poin" else "✗ Belum tepat",
+                    if (correct) (if (points > 0) "✓ Benar! +$points poin" else "✓ Benar!") else "✗ Belum tepat",
                     color = fg,
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold

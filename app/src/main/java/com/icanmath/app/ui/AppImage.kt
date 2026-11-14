@@ -16,6 +16,11 @@ import androidx.compose.ui.res.painterResource
  */
 object Slot {
     const val HOME_BG = "img_home_bg"
+    const val ITEM_KAYU = "img_item_kayu"
+    const val ITEM_BESI = "img_item_besi"
+    const val ITEM_ORB = "img_item_orb_tarantula"
+    const val GAME_MATH_BATTLE = "img_game_math_battle"
+    const val MENU_TAS = "img_menu_tas"
     const val LEVEL_SD = "img_level_sd"
     const val LEVEL_SMP = "img_level_smp"
     const val LEVEL_SMA = "img_level_sma"

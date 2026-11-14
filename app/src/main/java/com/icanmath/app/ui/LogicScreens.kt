@@ -130,9 +130,9 @@ fun LogicMenuScreen(vm: AppViewModel, nav: NavHostController) {
             Color(0xFF2E7D32), Color(0xFF00897B), index = 2, badge = status(2)
         ) { nav.navigate("group") }
         FunCard(
-            "Permainan lain", "Pola dan timbangan, segera hadir!", "🎲", Slot.LOGIC_OTHER,
-            Color(0xFF78909C), Color(0xFF90A4AE), index = 3, badge = "Segera hadir", enabled = false
-        ) { }
+            "Permainan lain", "Rumah game: Math Battle dan lainnya", "🎮", Slot.LOGIC_OTHER,
+            Color(0xFF37474F), Color(0xFF00695C), index = 3, badge = "Baru!"
+        ) { nav.navigate("games") }
         Text(
             "Medali logika terpisah dari medali latihan harian dan tidak memengaruhi ranking.",
             style = MaterialTheme.typography.bodySmall

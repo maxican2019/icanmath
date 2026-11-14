@@ -288,7 +288,12 @@ fun LevelTab(
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        SlotImage(slot, Modifier.size(28.dp)) { Text(emoji, fontSize = 22.sp) }
+        Box(
+            Modifier.size(38.dp).background(Color.White.copy(alpha = 0.92f), CircleShape),
+            contentAlignment = Alignment.Center
+        ) {
+            SlotImage(slot, Modifier.size(32.dp)) { Text(emoji, fontSize = 22.sp) }
+        }
         Spacer(Modifier.width(6.dp))
         Text(label, color = fg, fontWeight = FontWeight.ExtraBold)
     }

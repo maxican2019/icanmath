@@ -29,6 +29,9 @@ fun AppNav(vm: AppViewModel) {
         composable("group") { GroupGameScreen(vm, nav) }
         composable("profile") { ProfileScreen(vm, nav) }
         composable("settings") { SettingsScreen(vm, nav) }
+        composable("games") { GamesHubScreen(nav) }
+        composable("battle") { MathBattleScreen(vm, nav) }
+        composable("inventory") { InventoryScreen(nav) }
         composable("print") { PrintScreen(vm, nav) }
     }
 }

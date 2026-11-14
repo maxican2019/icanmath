@@ -342,6 +342,7 @@ fun DashboardScreen(vm: AppViewModel, nav: NavHostController) {
                     MenuItem("🖨️", "Cetak PDF", "Lembar soal untuk dicetak", Color(0xFFB7791F), "print", Slot.MENU_CETAK),
                     MenuItem("🏅", "Medali Saya", "Koleksi dan profil", Color(0xFFC62828), "profile", Slot.MENU_MEDALI),
                     MenuItem("👨‍👩‍👧", "Tambah Profil", "Untuk adik atau kakak", Color(0xFF6A1B9A), "profileform", Slot.MENU_PROFIL),
+                    MenuItem("🎒", "Tas Saya", "Hasil farming game", Color(0xFF6D4C41), "inventory", Slot.MENU_TAS),
                     MenuItem("⚙️", "Pengaturan", "Cadangan dan data", Color(0xFF546E7A), "settings", Slot.MENU_SETTING)
                 )
                 menu.chunked(2).forEach { rowItems ->
@@ -349,6 +350,7 @@ fun DashboardScreen(vm: AppViewModel, nav: NavHostController) {
                         rowItems.forEach { m ->
                             MenuTile(m, Modifier.weight(1f)) { nav.navigate(m.route) }
                         }
+                        if (rowItems.size == 1) Spacer(Modifier.weight(1f))
                     }
                 }
 
