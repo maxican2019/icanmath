@@ -25,7 +25,7 @@ Aplikasi Android latihan matematika untuk kelas 1 SD sampai 12 SMA. Tanpa login:
 
 ## Game dan inventory
 
-Latihan Logika, Permainan lain, membuka **Rumah Game** yang berisi Math Battle (dan ruang untuk game lain nanti). Hasil farming disimpan di modul **Inventory bersama** yang dipakai semua game; lihat `docs/INVENTORY.md` untuk API, contoh pemakaian, tabel drop, dan cara menjalankan tes.
+Latihan Logika, Permainan lain, membuka **Rumah Game** yang berisi Math Battle (dan ruang untuk game lain nanti). Hasil farming disimpan di modul **Inventory bersama** yang dipakai semua game; lihat `docs/INVENTORY.md` dan `docs/MATH_BATTLE.md` untuk API, contoh pemakaian, tabel drop, dan cara menjalankan tes.
 
 ## Mengganti gambar
 
