@@ -23,6 +23,10 @@ Aplikasi Android latihan matematika untuk kelas 1 SD sampai 12 SMA. Tanpa login:
 - Cetak soal ke PDF A4 (dengan kunci jawaban opsional), dibagikan lewat share sheet Android.
 - Cadangan dan pulihkan data lewat file JSON (simpan, bagikan, impor).
 
+## Game dan inventory
+
+Latihan Logika, Permainan lain, membuka **Rumah Game** yang berisi Math Battle (dan ruang untuk game lain nanti). Hasil farming disimpan di modul **Inventory bersama** yang dipakai semua game; lihat `docs/INVENTORY.md` untuk API, contoh pemakaian, tabel drop, dan cara menjalankan tes.
+
 ## Mengganti gambar
 
 Semua gambar di aplikasi adalah slot bernama yang bisa ditimpa dengan PNG tanpa mengubah kode. Lihat `docs/IMAGE_SLOTS.md` untuk daftar, ukuran, dan caranya. Sumber desain ada di `design/source/`.

@@ -21,14 +21,14 @@ Slot berstatus **placeholder** berisi kotak berlabel sementara. Slot berstatus *
 - Ukuran di tabel adalah saran. Rasio sama lebih penting daripada ukuran persis.
 - Sisakan margin kecil di tepi gambar agar tidak terpotong.
 
-## Status (31 gambar asli, 4 placeholder, 4 kosong)
+## Status (38 gambar asli, 0 placeholder, 6 kosong)
 
 | Berkas | Ukuran (px) | Dipakai di | Tanpa gambar tampil sebagai | Status |
 |---|---|---|---|---|
 | `img_home_bg.png` | 1080 × 1920 | Layar awal: latar penuh (kalau ada, simbol melayang disembunyikan) | Latar luar angkasa buatan kode | kosong (opsional) |
-| `img_level_sd.png` | 128 × 128 | Pilih Kelas: tab SD | Emoji 🎒 | kosong (opsional) |
-| `img_level_smp.png` | 128 × 128 | Pilih Kelas: tab SMP | Emoji 📚 | kosong (opsional) |
-| `img_level_sma.png` | 128 × 128 | Pilih Kelas: tab SMA | Emoji 🎓 | kosong (opsional) |
+| `img_level_sd.png` | 128 × 128 | Pilih Kelas: tab SD | Emoji 🎒 | gambar asli |
+| `img_level_smp.png` | 128 × 128 | Pilih Kelas: tab SMP | Emoji 📚 | gambar asli |
+| `img_level_sma.png` | 128 × 128 | Pilih Kelas: tab SMA | Emoji 🎓 | gambar asli |
 | `img_menu_soal.png` | 256 × 256 | Dashboard: menu Latihan Soal; header Pilih Kelas dan Pilih Jenis Soal | Emoji 📝 | gambar asli |
 | `img_menu_logika.png` | 256 × 256 | Dashboard: menu Latihan Logika; header menu logika | Emoji 🧩 / 🧠 | gambar asli |
 | `img_menu_cetak.png` | 256 × 256 | Dashboard: menu Cetak PDF; header Cetak Soal | Emoji 🖨️ | gambar asli |
@@ -36,10 +36,10 @@ Slot berstatus **placeholder** berisi kotak berlabel sementara. Slot berstatus *
 | `img_menu_profil.png` | 256 × 256 | Dashboard: Tambah Profil; header Profil Baru | Emoji 👨‍👩‍👧 | gambar asli |
 | `img_menu_setting.png` | 256 × 256 | Dashboard: Pengaturan; header Pengaturan | Emoji ⚙️ | gambar asli |
 | `img_daily_hero.png` | 256 × 256 | Dashboard: pojok kartu latihan harian | Emoji 🎯 | gambar asli |
-| `img_streak.png` | 128 × 128 | Dashboard: lencana streak; badge combo saat latihan | Emoji 🔥 | placeholder |
-| `img_rank_1.png` | 128 × 128 | Dashboard: ranking peringkat 1 | Emoji 🥇 | placeholder |
-| `img_rank_2.png` | 128 × 128 | Dashboard: ranking peringkat 2 | Emoji 🥈 | placeholder |
-| `img_rank_3.png` | 128 × 128 | Dashboard: ranking peringkat 3 | Emoji 🥉 | placeholder |
+| `img_streak.png` | 128 × 128 | Dashboard: lencana streak; badge combo saat latihan | Emoji 🔥 | gambar asli |
+| `img_rank_1.png` | 128 × 128 | Dashboard: ranking peringkat 1 | Emoji 🥇 | gambar asli |
+| `img_rank_2.png` | 128 × 128 | Dashboard: ranking peringkat 2 | Emoji 🥈 | gambar asli |
+| `img_rank_3.png` | 128 × 128 | Dashboard: ranking peringkat 3 | Emoji 🥉 | gambar asli |
 | `img_mode_random.png` | 192 × 192 | Pilih jenis soal: Soal acak | Emoji 🎲 | gambar asli |
 | `img_mode_mcq.png` | 192 × 192 | Pilih jenis soal: Pilihan ganda | Emoji 🎯 | gambar asli |
 | `img_mode_story.png` | 192 × 192 | Pilih jenis soal: Soal cerita | Emoji 📖 | gambar asli |
@@ -64,22 +64,24 @@ Slot berstatus **placeholder** berisi kotak berlabel sementara. Slot berstatus *
 | `img_avatar_4.png` | 256 × 256 | Avatar profil 4 (Female 2): pilihan di Profil Baru dan Medali Saya | Lingkaran berisi huruf pertama nama | gambar asli |
 | `img_avatar_5.png` | 256 × 256 | Avatar profil 5 (Female Hijab 1): pilihan di Profil Baru dan Medali Saya | Lingkaran berisi huruf pertama nama | gambar asli |
 | `img_avatar_6.png` | 256 × 256 | Avatar profil 6 (Female Hijab 2): pilihan di Profil Baru dan Medali Saya | Lingkaran berisi huruf pertama nama | gambar asli |
+| `img_item_kayu.png` | 128 × 128 | Inventory: ikon kayu (Tas Saya, bar inventory, hadiah) | Balok kayu digambar kode | kosong (opsional) |
+| `img_item_besi.png` | 128 × 128 | Inventory: ikon besi | Batang besi digambar kode | kosong (opsional) |
+| `img_item_orb_tarantula.png` | 128 × 128 | Inventory: ikon orb tarantula | Bola ungu digambar kode | kosong (opsional) |
+| `img_game_math_battle.png` | 192 × 192 | Rumah Game: kartu Math Battle | Emoji ⚔️ | kosong (opsional) |
+| `img_menu_tas.png` | 256 × 256 | Dashboard: menu Tas Saya; header Tas Saya | Emoji 🎒 | kosong (opsional) |
 
 ## Gambar yang belum dibuat
 
-Placeholder (sebaiknya diganti):
-
-- `img_streak.png` (128 × 128): Dashboard: lencana streak; badge combo saat latihan
-- `img_rank_1.png` (128 × 128): Dashboard: ranking peringkat 1
-- `img_rank_2.png` (128 × 128): Dashboard: ranking peringkat 2
-- `img_rank_3.png` (128 × 128): Dashboard: ranking peringkat 3
-
-Kosong (opsional, aplikasi tetap tampil baik tanpanya):
+Semua slot utama sudah berisi gambar asli. Tersisa slot opsional (aplikasi tetap tampil baik tanpanya, karena memakai gambar bawaan dari kode):
 
 - `img_home_bg.png` (1080 × 1920): Layar awal: latar penuh (kalau ada, simbol melayang disembunyikan)
-- `img_level_sd.png` (128 × 128): Pilih Kelas: tab SD
-- `img_level_smp.png` (128 × 128): Pilih Kelas: tab SMP
-- `img_level_sma.png` (128 × 128): Pilih Kelas: tab SMA
+- `img_item_kayu.png` (128 × 128): Inventory: ikon kayu
+- `img_item_besi.png` (128 × 128): Inventory: ikon besi
+- `img_item_orb_tarantula.png` (128 × 128): Inventory: ikon orb tarantula
+- `img_game_math_battle.png` (192 × 192): Rumah Game: kartu Math Battle
+- `img_menu_tas.png` (256 × 256): menu Tas Saya
+
+Catatan: ikon rumah dari sheet terakhir disimpan di `design/extra/icon_home.png` (belum dipakai) karena bentuknya ikon, bukan latar layar penuh.
 
 ## Ikon aplikasi
 
@@ -91,3 +93,8 @@ Versi 512 × 512 untuk Google Play ada di `design/play_store_icon_512.png`.
 
 Tambahkan konstanta di objek `Slot` pada `AppImage.kt`, lalu bungkus tampilan lama dengan
 `SlotImage(Slot.NAMA, Modifier.size(...)) { tampilan lama }`.
+
+## Catatan untuk gambar baru
+
+Karakter dan monster Math Battle sengaja **tanpa wajah** (tanpa mata, hidung, mulut). Itu berlaku juga untuk semua gambar item
+atau aset game baru yang Anda buat. Pahlawan dan monster di game digambar oleh kode, bukan oleh slot gambar.
